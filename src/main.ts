@@ -8,13 +8,20 @@ import PracticeView from './views/PracticeView.vue'
 import { db } from './data/db'
 import './style.css'
 
-const router = createRouter({ history: createWebHistory(), routes: [
-  { path: '/', component: CaptureView },
-  { path: '/sammlungen', component: CollectionsView },
-  { path: '/notiz/:id', component: NoteView },
-  { path: '/ueben', component: PracticeView },
-] })
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    { path: '/', component: CaptureView },
+    { path: '/sammlungen', component: CollectionsView },
+    { path: '/notiz/:id', component: NoteView },
+    { path: '/ueben', component: PracticeView },
+  ],
+})
 
 // A terminated browser tab cannot resume an in-flight request; make retries available.
-void db.notes.where('ai_status').equals('processing').modify({ ai_status: 'pending' }).catch(() => {})
+void db.notes
+  .where('ai_status')
+  .equals('processing')
+  .modify({ ai_status: 'pending' })
+  .catch(() => {})
 createApp(App).use(router).mount('#app')

@@ -1,5 +1,13 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { Note, Category, Tag, NoteCategory, NoteTag, Flashcard, Setting } from '../domain/schemas'
+import type {
+  Note,
+  Category,
+  Tag,
+  NoteCategory,
+  NoteTag,
+  Flashcard,
+  Setting,
+} from '../domain/schemas'
 
 export class PawDatabase extends Dexie {
   notes!: EntityTable<Note, 'id'>
@@ -13,10 +21,13 @@ export class PawDatabase extends Dexie {
   constructor(name = 'feinipedia') {
     super(name)
     this.version(1).stores({
-      notes: 'id, created_at, ai_status', categories: 'id, &name', tags: 'id, &name',
+      notes: 'id, created_at, ai_status',
+      categories: 'id, &name',
+      tags: 'id, &name',
       noteCategories: '[note_id+category_id], note_id, category_id',
       noteTags: '[note_id+tag_id], note_id, tag_id',
-      flashcards: 'id, &note_id, due_at, review_count', settings: 'id',
+      flashcards: 'id, &note_id, due_at, review_count',
+      settings: 'id',
     })
   }
 }

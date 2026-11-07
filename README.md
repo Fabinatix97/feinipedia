@@ -6,6 +6,10 @@ Ein privates, lokal gespeichertes Hundewissensbuch als installierbare PWA. Notiz
 
 Node.js 22+ und Yarn Classic (oder npm) installieren. `yarn install` ausführen, `.env.example` nach `.env` kopieren und optional `OPENAI_API_KEY` eintragen. In zwei Terminals `yarn dev:api` und `yarn dev` starten; die App ist dann unter `http://localhost:5173` erreichbar. Ohne API-Key funktionieren Notizen, manuelle Bearbeitung, Backup und Lernen weiterhin. Die API gibt in diesem Fall eine verständliche Fehlermeldung zurück. `yarn test` führt die Tests aus, `yarn build` baut Frontend und Server.
 
+## Codeformatierung
+
+`yarn format` formatiert den Projektcode mit Prettier; `yarn format:check` prüft die Formatierung ohne Änderungen. Das Anforderungsdokument, generierte Dateien und öffentliche Bild-Assets sind ausgenommen.
+
 ## Deployment
 
 `yarn install --frozen-lockfile`, `yarn build`, danach `OPENAI_API_KEY=... OPENAI_MODEL=gpt-4o-mini PORT=3001 yarn start`. Der Node-Server liefert sowohl die gebaute PWA als auch `/api/ai/enrich-note` und `/api/health` aus. Für Android-Installation und Service Worker per HTTPS (z. B. hinter einem Reverse-Proxy) bereitstellen. Den Server nur in einem privaten Netzwerk oder hinter einem Zugangsschutz veröffentlichen: Das MVP hat **keine Anmeldung** und der KI-Endpunkt wäre sonst frei nutzbar. Den Key niemals mit `VITE_` prefixen oder ins Frontend schreiben.

@@ -3,7 +3,21 @@ import { isDue, review, sessionCards } from './review'
 import type { Flashcard } from './schemas'
 
 const time = new Date('2026-01-01T12:00:00.000Z')
-const card = (): Flashcard => ({ id: crypto.randomUUID(), note_id: crypto.randomUUID(), question: 'Frage', answer: 'Antwort', created_at: time.toISOString(), updated_at: time.toISOString(), repetitions: 0, lapses: 0, interval_days: 0, ease_factor: 2.5, review_count: 0, last_reviewed_at: null, due_at: null })
+const card = (): Flashcard => ({
+  id: crypto.randomUUID(),
+  note_id: crypto.randomUUID(),
+  question: 'Frage',
+  answer: 'Antwort',
+  created_at: time.toISOString(),
+  updated_at: time.toISOString(),
+  repetitions: 0,
+  lapses: 0,
+  interval_days: 0,
+  ease_factor: 2.5,
+  review_count: 0,
+  last_reviewed_at: null,
+  due_at: null,
+})
 
 describe('review scheduling', () => {
   it('starts immediately and schedules again in ten minutes', () => {
@@ -33,7 +47,11 @@ describe('review scheduling', () => {
     const due = { ...review(card(), 'again', time), due_at: '2025-12-31T12:00:00.000Z' }
     const later = { ...review(card(), 'again', time), due_at: '2026-01-01T11:00:00.000Z' }
     const fresh = card()
-    expect(sessionCards([fresh, later, due], 1, 0, time).map(c => c.id)).toEqual([due.id, later.id, fresh.id])
+    expect(sessionCards([fresh, later, due], 1, 0, time).map((c) => c.id)).toEqual([
+      due.id,
+      later.id,
+      fresh.id,
+    ])
     expect(sessionCards([fresh, later, due], 1, 1, time).length).toBe(2)
   })
 })

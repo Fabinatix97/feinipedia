@@ -74,7 +74,7 @@ async function save(withAI: boolean) {
 
 <template>
   <div class="page capture-page">
-    <header class="capture-heading"><h1>Wissen festhalten.</h1><p>Eine Idee, ein Zitat oder etwas, das du über Hunde gelernt hast.</p></header>
+    <header class="capture-heading"><h1>Wissen festhalten</h1><p>Eine Idee, ein Zitat oder etwas, das du über Hunde gelernt hast.</p></header>
     <section class="capture-card">
       <div class="capture-label">Neue Notiz</div>
       <label class="sr-only" for="note-content">Deine Notiz</label>

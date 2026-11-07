@@ -72,7 +72,6 @@ h2 { font-size: 23px; }
 .capture-heading h1 { margin-bottom: 9px; }
 .capture-card { padding: 24px 26px 20px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
 .capture-label { display: flex; align-items: center; gap: 10px; color: var(--text); font-size: 14px; font-weight: 700; }
-.small-hint { margin-left: auto; color: var(--muted); font-size: 12px; font-weight: 400; }
 .capture-card textarea { display: block; width: 100%; min-height: 170px; resize: vertical; margin: 4px 0 0; padding: 18px 0; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 15px; line-height: 1.7; }
 input::placeholder, textarea::placeholder { color: #aa9c90; }
 .source-row { display: flex; align-items: center; gap: 10px; padding: 14px 0; border-top: 1px solid var(--border); color: #9d8672; }

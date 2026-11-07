@@ -76,7 +76,7 @@ async function save(withAI: boolean) {
   <div class="page capture-page">
     <header class="capture-heading"><h1>Wissen festhalten.</h1><p>Eine Idee, ein Zitat oder etwas, das du über Hunde gelernt hast.</p></header>
     <section class="capture-card">
-      <div class="capture-label">Neue Notiz <span class="small-hint">Nur der Text ist nötig</span></div>
+      <div class="capture-label">Neue Notiz</div>
       <label class="sr-only" for="note-content">Deine Notiz</label>
       <textarea id="note-content" v-model="content" placeholder="Was hast du heute über Hunde gelernt? Schreib einfach drauflos …" rows="5" maxlength="20000"></textarea>
       <div class="source-row"><Icon name="book" :size="18" /><label class="sr-only" for="note-source">Quelle (optional)</label><input id="note-source" v-model="source" placeholder="Quelle hinzufügen (optional)" maxlength="300" /></div>

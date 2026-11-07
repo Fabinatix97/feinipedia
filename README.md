@@ -23,6 +23,35 @@ Dateien und öffentliche Bild-Assets sind ausgenommen.
 
 ## Deployment
 
+### Vercel (Frontend und KI-API)
+
+1. **Vor dem Deployment** unter Projekt → Settings → Deployment Protection
+   **Vercel Authentication für „All Deployments“** aktivieren (auch Preview-URLs
+   und Produktionsdomain). „Standard Protection“ schützt die Produktionsdomain
+   nicht. Die API hat keine eigene Anmeldung und darf nicht ungeschützt online
+   gehen. Zugriff für die Nutzerin in Vercel freigeben.
+2. Das Repository im selben Vercel-Projekt mit Framework-Preset **Vite** und
+   Output Directory `dist` deployen. Die Dateien unter `api/` werden zu Vercel
+   Functions; `vercel.json` leitet nur App-Routen (nicht `/api/`) an die PWA
+   weiter. Der Frontend-Aufruf an `/api/ai/enrich-note` bleibt unverändert.
+3. Unter Projekt → Settings → Environment Variables `OPENAI_API_KEY` für
+   **Production** hinterlegen und danach neu deployen. Optional
+   `OPENAI_MODEL=gpt-4o-mini` setzen. Beide Variablen sind **serverseitig**:
+   kein `VITE_`-Präfix und niemals den Key im Frontend oder Repository speichern.
+4. Angemeldet `https://<deine-domain>/api/health` aufrufen: Erwartet wird
+   `{"ok":true}`. Unangemeldet muss **auch dieser API-Pfad** eine Anmeldung
+   verlangen. Anschließend eine Notiz über die App aufbereiten. Bei Fehlern
+   die Function-Logs im Vercel-Dashboard prüfen. Für den OpenAI-Key ein
+   Ausgabenlimit beim Anbieter setzen.
+
+Die Vercel Function und der lokale Express-Server verwenden dieselbe
+Validierung und OpenAI-Aufbereitung. Die Vercel Authentication wird von Vercel
+vor der Function durchgesetzt; wenn sie deaktiviert wird, ist die API öffentlich.
+Bereits offline gespeicherte PWA-Inhalte und Notizen bleiben auf dem jeweiligen
+Gerät verfügbar.
+
+### Eigener Node-Server
+
 `yarn install --frozen-lockfile`, `yarn build`, danach `OPENAI_API_KEY=...
 OPENAI_MODEL=gpt-4o-mini PORT=3001 yarn start`. Der Node-Server liefert sowohl
 die gebaute PWA als auch `/api/ai/enrich-note` und `/api/health` aus. Für

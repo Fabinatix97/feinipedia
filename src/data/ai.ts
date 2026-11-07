@@ -21,6 +21,10 @@ export async function enrichNote(noteId: string): Promise<void> {
         categories: categories.map((c) => ({ name: c.name, description: c.description })),
       }),
     })
+    if (!response.headers.get('content-type')?.includes('application/json'))
+      throw new Error(
+        'KI-Aufbereitung nicht verfügbar. Bitte lade die App neu und prüfe deine Anmeldung.',
+      )
     const result: unknown = await response.json()
     if (!response.ok)
       throw new Error(

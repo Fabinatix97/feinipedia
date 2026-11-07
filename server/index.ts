@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
 import { enrichmentSchema } from '../src/domain/schemas.js'
+import { openAIError } from './openai-error.js'
 
 try { process.loadEnvFile('.env') } catch { /* deployment may provide environment directly */ }
 
@@ -25,7 +26,8 @@ app.post('/api/ai/enrich-note', async (req, res) => {
       method: 'POST', signal: AbortSignal.timeout(25000),
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || 'gpt-4o-mini', temperature: 0.3,
+        // Temperature is intentionally omitted: reasoning models may reject non-default values.
+        model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
         response_format: { type: 'json_schema', json_schema: { name: 'dog_note', strict: true, schema: {
           type: 'object', additionalProperties: false, required: ['title', 'summary', 'categories', 'tags', 'flashcard'],
           properties: {
@@ -41,7 +43,12 @@ app.post('/api/ai/enrich-note', async (req, res) => {
         ],
       }),
     })
-    if (!response.ok) { res.status(502).json({ error: response.status === 429 ? 'KI-Limit erreicht. Bitte versuche es später erneut.' : 'Die KI ist derzeit nicht erreichbar. Bitte versuche es später erneut.' }); return }
+    if (!response.ok) {
+      const failure: unknown = await response.json().catch(() => null)
+      const code = z.object({ error: z.object({ code: z.string().nullable().optional() }) }).safeParse(failure)
+      const result = openAIError(response.status, code.success ? code.data.error.code || undefined : undefined)
+      res.status(result.status).json({ error: result.error }); return
+    }
     const body: unknown = await response.json()
     const content = z.object({ choices: z.array(z.object({ message: z.object({ content: z.string().nullable() }) })).min(1) }).parse(body).choices[0].message.content
     if (!content) throw new Error('Empty AI response')

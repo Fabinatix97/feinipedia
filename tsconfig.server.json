@@ -10,5 +10,6 @@
     "rootDir": ".",
     "types": ["node"]
   },
-  "include": ["server/**/*.ts", "src/domain/schemas.ts"]
+  "include": ["server/**/*.ts", "src/domain/schemas.ts"],
+  "exclude": ["server/**/*.test.ts"]
 }

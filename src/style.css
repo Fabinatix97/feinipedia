@@ -136,7 +136,6 @@ input::placeholder, textarea::placeholder { color: #aa9c90; }
 .detail-section h2 { margin: 6px 0 16px; font-size: 20px; }
 .original-content { margin-bottom: 0; color: #4c4037; font-size: 14px; line-height: 1.8; white-space: pre-wrap; }
 .source-line { display: flex; align-items: center; gap: 8px; margin: 24px 0 0; padding-top: 15px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; }
-.summary-content { margin: 0; color: #5f5147; font-size: 14px; line-height: 1.75; }
 .preview-card { padding: 23px; border-radius: 9px; background: #f7efe7; }
 .preview-card > span { color: #92745d; font-size: 10px; font-weight: 700; letter-spacing: .1em; }
 .preview-card strong { display: block; margin: 9px 0 0; font-size: 17px; line-height: 1.5; }

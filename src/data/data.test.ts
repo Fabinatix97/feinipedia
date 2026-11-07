@@ -23,7 +23,7 @@ describe('local data integrity', () => {
   it('reuses categories and does not overwrite original content or review count', async () => {
     const first = await createNote('Originaleins', '')
     const second = await createNote('Originalzwei', '')
-    const result = { title: 'Lernen', summary: '', categories: [{ name: 'Erziehung', description: '' }], tags: ['Alltag'], flashcard: { question: 'Wie?', answer: 'So.' } }
+    const result = { title: 'Lernen', categories: [{ name: 'Erziehung', description: '' }], tags: ['Alltag'], flashcard: { question: 'Wie?', answer: 'So.' } }
     await applyEnrichment(first.id, result)
     await db.flashcards.where('note_id').equals(first.id).modify({ review_count: 4 })
     await applyEnrichment(second.id, { ...result, categories: [{ name: ' erziehung ', description: '' }], tags: ['alltag'] })
@@ -39,7 +39,7 @@ describe('local data integrity', () => {
     const note = await createNote('Original', '')
     const card = (await db.flashcards.where('note_id').equals(note.id).first())!
     await db.flashcards.update(card.id, { review_count: 3, repetitions: 2, due_at: '2026-01-02T10:00:00.000Z' })
-    await saveManual(note.id, { title: 'Meine Notiz', summary: 'Kurz', content: 'Original', source: 'Buch', categories: 'Erziehung, Welpen', tags: 'Lernen, Alltag', question: 'Frage?', answer: 'Antwort.' })
+    await saveManual(note.id, { title: 'Meine Notiz', content: 'Original', source: 'Buch', categories: 'Erziehung, Welpen', tags: 'Lernen, Alltag', question: 'Frage?', answer: 'Antwort.' })
     const updated = (await db.flashcards.get(card.id))!
     expect(updated).toMatchObject({ question: 'Frage?', answer: 'Antwort.', review_count: 3, repetitions: 2, due_at: '2026-01-02T10:00:00.000Z' })
     const categories = await db.categories.toArray()
@@ -50,7 +50,7 @@ describe('local data integrity', () => {
   })
   it('roundtrips all records and rejects broken references without changing data', async () => {
     const note = await createNote('Ein Gedanke', 'Podcast')
-    await applyEnrichment(note.id, { title: 'Gedanke', summary: 'Kurz', categories: [{ name: 'Alltag', description: '' }], tags: ['Hund'], flashcard: { question: 'Was?', answer: 'Ein Gedanke' } })
+    await applyEnrichment(note.id, { title: 'Gedanke', categories: [{ name: 'Alltag', description: '' }], tags: ['Hund'], flashcard: { question: 'Was?', answer: 'Ein Gedanke' } })
     const backup = await exportBackup()
     expect(validateBackup(backup)).toEqual(backup)
     const target = new PawDatabase(`test-${crypto.randomUUID()}`)

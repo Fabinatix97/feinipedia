@@ -19,10 +19,10 @@ const busy = ref(false)
 const error = ref('')
 const notice = ref('')
 const dialog = ref<'consent' | 'delete' | null>(null)
-const form = ref({ title: '', summary: '', content: '', source: '', categories: '', tags: '', question: '', answer: '' })
+const form = ref({ title: '', content: '', source: '', categories: '', tags: '', question: '', answer: '' })
 watch([note, card, relations], () => {
   if (!editing.value && note.value && card.value) form.value = {
-    title: note.value.title, summary: note.value.summary, content: note.value.content, source: note.value.source,
+    title: note.value.title, content: note.value.content, source: note.value.source,
     categories: relations.value.categories.map(c => c.name).join(', '), tags: relations.value.tags.join(', '),
     question: card.value.question, answer: card.value.answer,
   }
@@ -71,13 +71,11 @@ async function remove() {
         <label>Titel<input v-model="form.title" maxlength="200" /></label>
         <label>Originalinhalt<textarea v-model="form.content" rows="6" /></label>
         <label>Quelle<input v-model="form.source" placeholder="Optional" /></label>
-        <label>Zusammenfassung<textarea v-model="form.summary" rows="3" /></label>
         <div class="form-two"><label>Kategorien<input v-model="form.categories" placeholder="z. B. Welpen, Erziehung" /></label><label>Tags<input v-model="form.tags" placeholder="z. B. Training, Alltag" /></label></div>
         <label>Lernfrage<input v-model="form.question" /></label><label>Antwort<textarea v-model="form.answer" rows="3" /></label>
         <div class="edit-actions"><button class="btn btn-quiet" @click="editing = false">Abbrechen</button><button class="btn btn-primary" :disabled="busy" @click="save">Änderungen speichern</button></div></div>
       <div v-else class="detail-grid"><div class="detail-main"><div v-if="note.ai_status === 'pending' || note.ai_status === 'failed' || note.ai_status === 'processing'" class="ai-banner"><span class="ai-banner-icon"><Icon name="sparkle" :size="22" /></span><div><strong>{{ statusText }}</strong><p>Dein Original ist sicher gespeichert. Du kannst es mit KI aufbereiten oder alles selbst bearbeiten.</p></div><button class="btn btn-primary" :disabled="busy || note.ai_status === 'processing'" @click="process">{{ busy || note.ai_status === 'processing' ? 'Wird aufbereitet …' : 'KI starten' }}</button></div>
-          <section class="detail-section"><div class="overline">DEINE NOTIZ</div><h2>Das hast du festgehalten</h2><p class="original-content">{{ note.content }}</p><p v-if="note.source" class="source-line"><Icon name="book" :size="17" /> Quelle: {{ note.source }}</p></section>
-          <section v-if="note.summary" class="detail-section"><div class="overline">AUF EINEN BLICK</div><h2>Das Wichtigste</h2><p class="summary-content">{{ note.summary }}</p></section>
+          <section class="detail-section" aria-label="Originalnotiz"><p class="original-content">{{ note.content }}</p><p v-if="note.source" class="source-line"><Icon name="book" :size="17" /> Quelle: {{ note.source }}</p></section>
           <section class="detail-section"><div class="overline">ZUM MERKEN</div><h2>Deine Lernkarte</h2><div class="preview-card"><span>FRAGE</span><strong>{{ card.question }}</strong><div class="preview-divider"></div><span>ANTWORT</span><p>{{ card.answer }}</p></div><p class="review-info">{{ card.review_count }} × geübt <span class="middle-dot">·</span> {{ card.due_at ? `Nächste Fälligkeit: ${new Date(card.due_at).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' })}` : 'Noch nicht geübt' }}</p></section></div>
         <aside class="detail-aside"><div class="aside-card"><h3>Kategorien</h3><div v-if="relations.categories.length" class="pill-list"><span class="tag-pill" v-for="cat in relations.categories" :key="cat.id">{{ cat.name }}</span></div><p v-else class="aside-muted">Noch keine Kategorien</p><div class="aside-divider"></div><h3>Tags</h3><div v-if="relations.tags.length" class="pill-list"><span class="tag-pill light" v-for="tag in relations.tags" :key="tag">#{{ tag }}</span></div><p v-else class="aside-muted">Noch keine Tags</p></div></aside></div>
       <p v-if="error" class="alert error" role="alert">{{ error }}</p><p v-if="notice" class="alert" role="status">{{ notice }}</p>

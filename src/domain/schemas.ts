@@ -3,7 +3,7 @@ import { z } from 'zod'
 const id = z.uuid()
 const date = z.iso.datetime({ offset: true })
 const text = z.string().trim().min(1)
-export const noteSchema = z.object({ id, title: text, content: text, summary: z.string(), source: z.string(), created_at: date, updated_at: date, ai_status: z.enum(['pending', 'processing', 'completed', 'failed', 'manual']) })
+export const noteSchema = z.object({ id, title: text, content: text, source: z.string(), created_at: date, updated_at: date, ai_status: z.enum(['pending', 'processing', 'completed', 'failed', 'manual']) })
 export const categorySchema = z.object({ id, name: text, description: z.string(), created_at: date })
 export const tagSchema = z.object({ id, name: text })
 export const linkSchema = z.object({ note_id: id, category_id: id })
@@ -20,7 +20,7 @@ export type Flashcard = z.infer<typeof cardSchema>
 export type Setting = z.infer<typeof settingSchema>
 
 export const enrichmentSchema = z.object({
-  title: text.max(80), summary: z.string(),
+  title: text.max(80),
   categories: z.array(z.object({ name: text, description: z.string() })),
   tags: z.array(text),
   flashcard: z.object({ question: text, answer: text }),

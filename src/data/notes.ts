@@ -10,7 +10,7 @@ export async function createNote(content: string, source: string): Promise<Note>
   const note: Note = {
     id: crypto.randomUUID(), content, source: source.trim(),
     title: content.trim().replace(/\s+/g, ' ').slice(0, 65) + (content.trim().length > 65 ? '…' : ''),
-    summary: '', created_at: date, updated_at: date, ai_status: 'pending',
+    created_at: date, updated_at: date, ai_status: 'pending',
   }
   const card: Flashcard = {
     id: crypto.randomUUID(), note_id: note.id, question: 'Was ist die wichtigste Erkenntnis aus dieser Notiz?',
@@ -52,7 +52,7 @@ export async function deleteCategory(id: string): Promise<void> {
 }
 
 export async function saveManual(noteId: string, fields: {
-  title: string; summary: string; content: string; source: string; categories: string; tags: string;
+  title: string; content: string; source: string; categories: string; tags: string;
   question: string; answer: string
 }): Promise<void> {
   if (!fields.title.trim() || !fields.content.trim() || !fields.question.trim() || !fields.answer.trim()) throw new Error('Titel, Inhalt, Frage und Antwort dürfen nicht leer sein.')
@@ -60,7 +60,7 @@ export async function saveManual(noteId: string, fields: {
     const note = await db.notes.get(noteId)
     const card = await db.flashcards.where('note_id').equals(noteId).first()
     if (!note || !card) throw new Error('Notiz nicht gefunden.')
-    await db.notes.update(noteId, { title: fields.title.trim(), summary: fields.summary.trim(), content: fields.content, source: fields.source.trim(), ai_status: 'manual', updated_at: now() })
+    await db.notes.update(noteId, { title: fields.title.trim(), content: fields.content, source: fields.source.trim(), ai_status: 'manual', updated_at: now() })
     await db.flashcards.update(card.id, { question: fields.question.trim(), answer: fields.answer.trim(), updated_at: now() })
     await setLinks(noteId, fields.categories.split(','), fields.tags.split(','))
   })
@@ -104,7 +104,7 @@ export async function applyEnrichment(noteId: string, raw: unknown, expectedCont
     const card = await db.flashcards.where('note_id').equals(noteId).first()
     if (!note || !card) throw new Error('Notiz nicht gefunden.')
     if (expectedContent !== undefined && (note.content !== expectedContent || note.ai_status !== 'processing')) throw new Error('Die Notiz wurde zwischenzeitlich bearbeitet. Die KI-Antwort wurde nicht übernommen.')
-    await db.notes.update(noteId, { title: result.title, summary: result.summary, ai_status: 'completed', updated_at: now() })
+    await db.notes.update(noteId, { title: result.title, ai_status: 'completed', updated_at: now() })
     await db.flashcards.update(card.id, { question: result.flashcard.question, answer: result.flashcard.answer, updated_at: now() })
     await setLinks(noteId, result.categories.map(c => c.name), result.tags,
       Object.fromEntries(result.categories.map(c => [normalize(c.name), c.description])))

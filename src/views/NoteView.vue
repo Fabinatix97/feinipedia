@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Icon from '../components/Icon.vue'
+import ActionDialog from '../components/ActionDialog.vue'
 import { db } from '../data/db'
 import { useLive } from '../data/live'
 import { deleteNote, getNoteRelations, saveManual } from '../data/notes'
@@ -17,6 +18,7 @@ const editing = ref(false)
 const busy = ref(false)
 const error = ref('')
 const notice = ref('')
+const dialog = ref<'consent' | 'delete' | null>(null)
 const form = ref({ title: '', summary: '', content: '', source: '', categories: '', tags: '', question: '', answer: '' })
 watch([note, card, relations], () => {
   if (!editing.value && note.value && card.value) form.value = {
@@ -33,19 +35,30 @@ async function save() {
 }
 async function process() {
   if (busy.value) return
-  const consent = await db.settings.get('ai_consent')
-  if (consent?.value !== true) {
-    if (!window.confirm('Für die KI-Aufbereitung wird der Originaltext deiner Notiz an OpenAI übertragen. Möchtest du fortfahren?')) return
+  try {
+    const consent = await db.settings.get('ai_consent')
+    if (consent?.value !== true) { dialog.value = 'consent'; return }
+  } catch (e) { error.value = (e as Error).message; return }
+  await runEnrichment()
+}
+async function confirmConsent() {
+  if (busy.value) return
+  busy.value = true
+  try {
     await db.settings.put({ id: 'ai_consent', value: true })
-  }
+    dialog.value = null
+    await runEnrichment()
+  } catch (e) { error.value = (e as Error).message } finally { busy.value = false }
+}
+async function runEnrichment() {
   busy.value = true; error.value = ''; notice.value = ''
   try { await enrichNote(id); notice.value = 'Deine Notiz wurde aufbereitet. Du kannst alle Ergebnisse bearbeiten.' }
   catch (e) { error.value = `${(e as Error).message} Die Notiz bleibt gespeichert.` } finally { busy.value = false }
 }
 async function remove() {
-  if (!window.confirm('Diese Notiz und ihre Lernkarte wirklich löschen?')) return
-  await deleteNote(id)
-  await router.push('/sammlungen')
+  busy.value = true
+  try { await deleteNote(id); dialog.value = null; await router.push('/sammlungen') }
+  catch (e) { error.value = (e as Error).message } finally { busy.value = false }
 }
 </script>
 
@@ -53,7 +66,7 @@ async function remove() {
   <div class="page detail-page"><RouterLink to="/sammlungen" class="back-link"><Icon name="back" :size="18" /> Zurück zu Sammlungen</RouterLink>
     <div v-if="!note || !card" class="empty-state"><h2>Notiz nicht gefunden</h2><RouterLink to="/sammlungen" class="text-link">Zu den Sammlungen</RouterLink></div>
     <template v-else>
-      <div class="detail-heading"><div><div class="eyebrow"><Icon name="paw" :size="16" /> DEIN WISSEN</div><h1>{{ note.title }}</h1><p>{{ new Date(note.created_at).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' }) }} <span class="middle-dot">·</span> {{ statusText }}</p></div><div class="detail-actions"><button v-if="!editing" class="btn btn-outline" @click="editing = true">✎ &nbsp; Bearbeiten</button><button class="btn btn-danger-ghost" title="Notiz löschen" aria-label="Notiz löschen" @click="remove"><Icon name="trash" :size="18" /></button></div></div>
+      <div class="detail-heading"><div><h1>{{ note.title }}</h1><p>{{ new Date(note.created_at).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' }) }} <span class="middle-dot">·</span> {{ statusText }}</p></div><div class="detail-actions"><button v-if="!editing" class="btn btn-outline" @click="editing = true">Bearbeiten</button><button class="btn btn-danger-ghost" title="Notiz löschen" aria-label="Notiz löschen" :disabled="busy" @click="dialog = 'delete'"><Icon name="trash" :size="18" /></button></div></div>
       <div v-if="editing" class="edit-card"><div class="overline">NOTIZ BEARBEITEN</div><p class="edit-hint">Der Originaltext wird nur durch deine Eingabe verändert – nie durch die KI. Kategorien und Tags mit Kommas trennen.</p>
         <label>Titel<input v-model="form.title" maxlength="200" /></label>
         <label>Originalinhalt<textarea v-model="form.content" rows="6" /></label>
@@ -66,8 +79,10 @@ async function remove() {
           <section class="detail-section"><div class="overline">DEINE NOTIZ</div><h2>Das hast du festgehalten</h2><p class="original-content">{{ note.content }}</p><p v-if="note.source" class="source-line"><Icon name="book" :size="17" /> Quelle: {{ note.source }}</p></section>
           <section v-if="note.summary" class="detail-section"><div class="overline">AUF EINEN BLICK</div><h2>Das Wichtigste</h2><p class="summary-content">{{ note.summary }}</p></section>
           <section class="detail-section"><div class="overline">ZUM MERKEN</div><h2>Deine Lernkarte</h2><div class="preview-card"><span>FRAGE</span><strong>{{ card.question }}</strong><div class="preview-divider"></div><span>ANTWORT</span><p>{{ card.answer }}</p></div><p class="review-info">{{ card.review_count }} × geübt <span class="middle-dot">·</span> {{ card.due_at ? `Nächste Fälligkeit: ${new Date(card.due_at).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' })}` : 'Noch nicht geübt' }}</p></section></div>
-        <aside class="detail-aside"><div class="aside-card"><div class="overline">EINSORTIERT UNTER</div><h3>Kategorien</h3><div v-if="relations.categories.length" class="pill-list"><span class="tag-pill" v-for="cat in relations.categories" :key="cat.id">{{ cat.name }}</span></div><p v-else class="aside-muted">Noch keine Kategorien</p><div class="aside-divider"></div><h3>Tags</h3><div v-if="relations.tags.length" class="pill-list"><span class="tag-pill light" v-for="tag in relations.tags" :key="tag">#{{ tag }}</span></div><p v-else class="aside-muted">Noch keine Tags</p></div><RouterLink to="/ueben" class="aside-practice"><Icon name="cards" :size="24" /><span>Wissen bleibt, wenn wir es wiederholen.<strong>Zur Lernsession <Icon name="arrow" :size="15" /></strong></span></RouterLink></aside></div>
+        <aside class="detail-aside"><div class="aside-card"><h3>Kategorien</h3><div v-if="relations.categories.length" class="pill-list"><span class="tag-pill" v-for="cat in relations.categories" :key="cat.id">{{ cat.name }}</span></div><p v-else class="aside-muted">Noch keine Kategorien</p><div class="aside-divider"></div><h3>Tags</h3><div v-if="relations.tags.length" class="pill-list"><span class="tag-pill light" v-for="tag in relations.tags" :key="tag">#{{ tag }}</span></div><p v-else class="aside-muted">Noch keine Tags</p></div></aside></div>
       <p v-if="error" class="alert error" role="alert">{{ error }}</p><p v-if="notice" class="alert" role="status">{{ notice }}</p>
     </template>
+    <ActionDialog :open="dialog === 'consent'" title="Mit KI aufbereiten?" confirm-label="Ja, aufbereiten" :busy="busy" @confirm="confirmConsent" @cancel="dialog = null"><p>Der Originaltext deiner Notiz wird für die Aufbereitung an OpenAI übertragen. Die Notiz bleibt auf deinem Gerät gespeichert.</p><p v-if="error" class="alert error" role="alert">{{ error }}</p></ActionDialog>
+    <ActionDialog :open="dialog === 'delete'" title="Notiz löschen?" confirm-label="Notiz löschen" tone="danger" :busy="busy" @confirm="remove" @cancel="dialog = null"><p>Diese Notiz und ihre Lernkarte werden dauerhaft gelöscht.</p></ActionDialog>
   </div>
 </template>

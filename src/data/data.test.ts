@@ -1,7 +1,7 @@
 import 'fake-indexeddb/auto'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { PawDatabase } from './db'
-import { createNote, applyEnrichment, deleteNote, getNoteRelations } from './notes'
+import { createNote, applyEnrichment, deleteNote, deleteCategory, getNoteRelations, saveManual } from './notes'
 import { exportBackup, importBackup, validateBackup } from './backup'
 import { db } from './db'
 
@@ -10,7 +10,8 @@ afterEach(async () => { await db.delete() })
 
 describe('local data integrity', () => {
   it('creates one usable card and deletes it with its note', async () => {
-    const note = await createNote('Ein Hund lernt in kleinen Schritten.', 'Buch')
+    const note = await createNote('  Ein Hund lernt in kleinen Schritten.\n', 'Buch')
+    expect((await db.notes.get(note.id))?.content).toBe('  Ein Hund lernt in kleinen Schritten.\n')
     const cards = await db.flashcards.toArray()
     expect(cards).toHaveLength(1)
     expect(cards[0].note_id).toBe(note.id)
@@ -33,6 +34,19 @@ describe('local data integrity', () => {
     expect((await db.flashcards.where('note_id').equals(first.id).first())?.review_count).toBe(4)
     await expect(applyEnrichment(first.id, { title: '' })).rejects.toThrow()
     expect((await db.notes.get(first.id))?.title).toBe('Lernen')
+  })
+  it('allows manual edits without resetting learning and removes only category links', async () => {
+    const note = await createNote('Original', '')
+    const card = (await db.flashcards.where('note_id').equals(note.id).first())!
+    await db.flashcards.update(card.id, { review_count: 3, repetitions: 2, due_at: '2026-01-02T10:00:00.000Z' })
+    await saveManual(note.id, { title: 'Meine Notiz', summary: 'Kurz', content: 'Original', source: 'Buch', categories: 'Erziehung, Welpen', tags: 'Lernen, Alltag', question: 'Frage?', answer: 'Antwort.' })
+    const updated = (await db.flashcards.get(card.id))!
+    expect(updated).toMatchObject({ question: 'Frage?', answer: 'Antwort.', review_count: 3, repetitions: 2, due_at: '2026-01-02T10:00:00.000Z' })
+    const categories = await db.categories.toArray()
+    await deleteCategory(categories[0].id)
+    expect(await db.notes.get(note.id)).toBeDefined()
+    expect(await db.noteCategories.where('note_id').equals(note.id).count()).toBe(1)
+    expect(await db.noteTags.where('note_id').equals(note.id).count()).toBe(2)
   })
   it('roundtrips all records and rejects broken references without changing data', async () => {
     const note = await createNote('Ein Gedanke', 'Podcast')

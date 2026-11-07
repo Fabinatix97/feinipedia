@@ -7,7 +7,7 @@ export default defineConfig({
     vue(),
     VitePWA({
       registerType: 'prompt',
-      includeAssets: ['paw.svg'],
+      includeAssets: ['dog-face.png'],
       manifest: {
         name: 'Feinipedia – Dein Hundewissensbuch',
         short_name: 'Feinipedia',

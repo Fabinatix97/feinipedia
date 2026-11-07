@@ -106,8 +106,7 @@ h2 {
   width: 37px;
   height: 37px;
   border-radius: 10px;
-  background: var(--accent);
-  color: white;
+  background: var(--soft);
 }
 .side-nav {
   display: grid;

@@ -27,7 +27,7 @@ const links = [
   <div class="app-shell">
     <aside class="sidebar">
       <RouterLink to="/" class="brand"
-        ><span class="brand-mark"><Icon name="paw" :size="26" /></span
+        ><span class="brand-mark"><Icon name="dog" :size="32" /></span
         ><span
           >Feini<span class="brand-light">pedia</span><small>DEIN HUNDEWISSENSBUCH</small></span
         ></RouterLink
@@ -57,7 +57,7 @@ const links = [
     <div class="main-area">
       <header class="topbar">
         <RouterLink to="/" class="mobile-brand"
-          ><span class="brand-mark"><Icon name="paw" :size="21" /></span>Feinipedia</RouterLink
+          ><span class="brand-mark"><Icon name="dog" :size="27" /></span>Feinipedia</RouterLink
         >
         <span v-if="!online" class="connection"
           ><span class="status-dot offline"></span>Offline-Modus</span

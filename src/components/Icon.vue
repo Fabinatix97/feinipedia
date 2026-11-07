@@ -3,7 +3,16 @@ defineProps<{ name: string; size?: number }>()
 </script>
 
 <template>
+  <img
+    v-if="name === 'dog'"
+    src="/dog-face.png"
+    :width="size || 22"
+    :height="size || 22"
+    alt=""
+    aria-hidden="true"
+  />
   <svg
+    v-else
     :width="size || 22"
     :height="size || 22"
     viewBox="0 0 24 24"
@@ -14,16 +23,7 @@ defineProps<{ name: string; size?: number }>()
     stroke-linejoin="round"
     aria-hidden="true"
   >
-    <template v-if="name === 'paw'">
-      <ellipse cx="7" cy="7.5" rx="1.4" ry="2" />
-      <ellipse cx="12" cy="5.8" rx="1.4" ry="2" />
-      <ellipse cx="17" cy="7.5" rx="1.4" ry="2" />
-      <circle cx="20" cy="11.5" r="1.25" />
-      <path
-        d="M12 11c-3 0-3.8 3.5-6 5.2-2.4 1.8-.3 5.7 2.9 4.3a5.7 5.7 0 0 1 6.2 0c3.2 1.5 5.3-2.5 2.9-4.3C15.8 14.5 15 11 12 11Z"
-      />
-    </template>
-    <template v-else-if="name === 'plus'"><path d="M12 5v14M5 12h14" /></template>
+    <template v-if="name === 'plus'"><path d="M12 5v14M5 12h14" /></template>
     <template v-else-if="name === 'book'">
       <path
         d="M12 5.5c-2-1.7-5.6-2.1-9-1.1v14c3.4-1 7-.6 9 1.1 2-1.7 5.6-2.1 9-1.1v-14c-3.4-1-7-.6-9 1.1Zm0 0v14"

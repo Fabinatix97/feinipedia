@@ -151,7 +151,7 @@ async function setLimit(event: Event) {
         </div>
         <div class="flashcard">
           <span class="card-eyebrow"
-            ><Icon name="paw" :size="17" /> {{ revealed ? 'DEINE ANTWORT' : 'DIE FRAGE' }}</span
+            ><Icon name="dog" :size="17" /> {{ revealed ? 'DEINE ANTWORT' : 'DIE FRAGE' }}</span
           >
           <p v-if="currentNote" class="card-context">Aus „{{ currentNote.title }}“</p>
           <h2>{{ current.question }}</h2>

@@ -1,5 +1,5 @@
 import { db, type PawDatabase } from './db'
-import { backupSchema, type Backup } from '../domain/schemas'
+import { backupSchema, noteSchema, type Backup } from '../domain/schemas'
 import { normalize } from './notes'
 
 export async function exportBackup(database: PawDatabase = db): Promise<Backup> {
@@ -8,7 +8,7 @@ export async function exportBackup(database: PawDatabase = db): Promise<Backup> 
       database.notes.toArray(), database.categories.toArray(), database.tags.toArray(),
       database.noteCategories.toArray(), database.noteTags.toArray(), database.flashcards.toArray(), database.settings.toArray(),
     ])
-    return { version: 1, exported_at: new Date().toISOString(), notes, categories, tags, noteCategories, noteTags, flashcards, settings }
+    return { version: 1, exported_at: new Date().toISOString(), notes: notes.map(note => noteSchema.parse(note)), categories, tags, noteCategories, noteTags, flashcards, settings }
   })
 }
 

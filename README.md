@@ -1,4 +1,4 @@
-# Pfotenwissen
+# Feinipedia
 
 Ein privates, lokal gespeichertes Hundewissensbuch als installierbare PWA. Notizen, Sammlungen und Lernkarten funktionieren offline; die optionale KI-Aufbereitung benötigt Internet und einen eigenen OpenAI-API-Key auf dem Server.
 

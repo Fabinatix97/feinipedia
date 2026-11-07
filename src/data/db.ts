@@ -10,7 +10,7 @@ export class PawDatabase extends Dexie {
   flashcards!: EntityTable<Flashcard, 'id'>
   settings!: EntityTable<Setting, 'id'>
 
-  constructor(name = 'pfotenwissen') {
+  constructor(name = 'feinipedia') {
     super(name)
     this.version(1).stores({
       notes: 'id, created_at, ai_status', categories: 'id, &name', tags: 'id, &name',

@@ -1,4 +1,4 @@
-# Anforderungsdokument – Pfotenwissen
+# Anforderungsdokument – Feinipedia
 
 **Version:** 1.0  
 **Status:** Entwurf / MVP  
@@ -11,7 +11,7 @@ lernbar macht.
 
 ## 1. Produktvision
 
-Pfotenwissen ist ein persönliches digitales Hundewissensbuch. Nutzer können
+Feinipedia ist ein persönliches digitales Hundewissensbuch. Nutzer können
 Wissen, Zitate und eigene Notizen mit möglichst wenig Aufwand erfassen. Ein
 KI-Dienst erzeugt daraus einen prägnanten Titel, passende Kategorien und Tags
 sowie genau eine Lernkarte mit Frage und Antwort.

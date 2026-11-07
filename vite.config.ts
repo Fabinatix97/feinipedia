@@ -7,7 +7,7 @@ export default defineConfig({
     registerType: 'prompt',
     includeAssets: ['paw.svg'],
     manifest: {
-      name: 'Pfotenwissen – Dein Hundewissensbuch', short_name: 'Pfotenwissen',
+      name: 'Feinipedia – Dein Hundewissensbuch', short_name: 'Feinipedia',
       description: 'Wissen rund um deinen Hund sammeln und behalten.',
       lang: 'de',
       theme_color: '#fbf8f4', background_color: '#fbf8f4', display: 'standalone',

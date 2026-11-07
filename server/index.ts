@@ -66,4 +66,4 @@ app.get(/^(?!\/api\/).*/, (_req, res) => { res.sendFile(join(root, 'index.html')
 app.use((_req, res) => { res.status(404).json({ error: 'Nicht gefunden.' }) })
 
 const port = Number(process.env.PORT || 3001)
-app.listen(port, () => console.info(`Pfotenwissen läuft auf Port ${port}`))
+app.listen(port, () => console.info(`Feinipedia läuft auf Port ${port}`))

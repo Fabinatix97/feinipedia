@@ -57,7 +57,8 @@ const links = [
     <div class="main-area">
       <header class="topbar">
         <RouterLink to="/" class="mobile-brand"
-          ><span class="brand-mark"><Icon name="dog" :size="27" /></span>Feinipedia</RouterLink
+          ><span class="brand-mark"><Icon name="dog" :size="27" /></span
+          ><span>Feini<span class="brand-light">pedia</span></span></RouterLink
         >
         <span v-if="!online" class="connection"
           ><span class="status-dot offline"></span>Offline-Modus</span

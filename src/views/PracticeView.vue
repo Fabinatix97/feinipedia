@@ -150,16 +150,11 @@ async function setLimit(event: Event) {
           ></span>
         </div>
         <div class="flashcard">
-          <span class="card-eyebrow"
-            ><Icon name="dog" :size="17" /> {{ revealed ? 'DEINE ANTWORT' : 'DIE FRAGE' }}</span
-          >
-          <p v-if="currentNote" class="card-context">Aus „{{ currentNote.title }}“</p>
           <h2>{{ current.question }}</h2>
           <div v-if="revealed" class="revealed-answer">
             <div class="overline">ANTWORT</div>
             <p>{{ current.answer }}</p>
           </div>
-          <div v-else class="think-prompt">Nimm dir einen Moment. Was fällt dir dazu ein?</div>
         </div>
         <button v-if="!revealed" class="btn btn-primary reveal-button" @click="revealed = true">
           Antwort anzeigen <Icon name="arrow" :size="18" />

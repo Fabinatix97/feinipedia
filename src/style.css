@@ -914,7 +914,7 @@ textarea::placeholder {
   transition: width 0.3s;
 }
 .flashcard {
-  min-height: 290px;
+  min-height: 220px;
   padding: 36px 40px;
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -929,24 +929,14 @@ textarea::placeholder {
   font-weight: 700;
   letter-spacing: 0.11em;
 }
-.card-context {
-  margin: 16px 0 0;
-  color: var(--muted);
-  font-size: 11px;
-}
 .flashcard h2 {
   margin: 22px 0 32px;
   font-size: clamp(23px, 3vw, 31px);
   line-height: 1.4;
 }
-.think-prompt,
 .revealed-answer {
   padding-top: 22px;
   border-top: 1px solid var(--border);
-}
-.think-prompt {
-  color: var(--muted);
-  font-size: 12px;
 }
 .revealed-answer p {
   margin: 11px 0 0;

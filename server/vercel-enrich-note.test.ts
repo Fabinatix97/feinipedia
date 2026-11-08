@@ -60,5 +60,9 @@ describe('Vercel AI function', () => {
     expect(await response.json()).toEqual(enrichment)
     expect(calls).toHaveBeenCalledOnce()
     expect(calls.mock.calls[0][1].headers.Authorization).toBe('Bearer test-key')
+    const prompt = JSON.parse(calls.mock.calls[0][1].body).messages[0].content as string
+    expect(prompt).toContain('Vermeide in beiden Metabezüge')
+    expect(prompt).toContain('„Was wird bei Hundebegegnungen empfohlen?“')
+    expect(prompt).toContain('statt sie als gesicherte Handlungsempfehlungen darzustellen')
   })
 })

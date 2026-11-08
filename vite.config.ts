@@ -13,8 +13,8 @@ export default defineConfig({
         short_name: 'Feinipedia',
         description: 'Wissen rund um deinen Hund sammeln und behalten.',
         lang: 'de',
-        theme_color: '#fbf8f4',
-        background_color: '#fbf8f4',
+        theme_color: '#f3e9df',
+        background_color: '#f3e9df',
         display: 'standalone',
         start_url: '/',
         icons: [

@@ -29,4 +29,23 @@ export default defineConfig({
     }),
   ],
   server: { proxy: { '/api': 'http://localhost:3001' } },
+  build: {
+    rollupOptions: {
+      onwarn(warning, defaultHandler) {
+        // Zod's explanatory comments mention @__PURE__ but are not annotations.
+        const zodCoreFile = warning.id
+          ?.replaceAll('\\', '/')
+          .match(/\/node_modules\/zod\/v4\/core\/(util|regexes)\.js$/)
+        if (
+          warning.code === 'INVALID_ANNOTATION' &&
+          zodCoreFile &&
+          (warning.message.includes('Wrapped in a `@__PURE__` IIFE:') ||
+            warning.message.includes('Anchors a pattern source.'))
+        ) {
+          return
+        }
+        defaultHandler(warning)
+      },
+    },
+  },
 })

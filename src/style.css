@@ -12,6 +12,7 @@
   --soft: #f3e9df;
   --border: #e9ded3;
   --surface: #fffdf9;
+  --header: #f3e9df;
 }
 * {
   box-sizing: border-box;
@@ -74,7 +75,7 @@ h2 {
   z-index: 5;
   width: 228px;
   padding: 32px 17px;
-  background: #f5eee6;
+  background: var(--header);
   border-right: 1px solid var(--border);
 }
 .brand {
@@ -142,7 +143,7 @@ h2 {
   align-items: center;
   justify-content: flex-end;
   height: 0;
-  background: var(--surface);
+  background: var(--header);
 }
 .topbar:has(.connection) {
   height: 48px;
@@ -1073,7 +1074,7 @@ textarea::placeholder {
 
 @media (max-width: 900px) {
   .sidebar {
-    width: 195px;
+    width: 210px;
   }
   .brand {
     font-size: 17px;
